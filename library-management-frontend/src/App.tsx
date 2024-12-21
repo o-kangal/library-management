@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import UserList from "./components/UserList.tsx";
 import UserDetail from "./pages/UserDetail.tsx";
+import BookList from "./components/BookList.tsx";
+import BookDetail from "./pages/BookDetail.tsx";
 
 const App: React.FC = () => {
   return (
@@ -9,6 +11,8 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/users" element={<UserList />} />
         <Route path="/users/:id" element={<UserDetail />} />
+        <Route path="/books" element={<BookList />} />
+        <Route path="/books/:id" element={<BookDetail />} />
       </Routes>
     </Router>
   );
