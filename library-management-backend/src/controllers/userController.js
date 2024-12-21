@@ -56,3 +56,31 @@ exports.borrowBook = async (req, res) => {
     res.status(500).json({ error: "Failed to borrow book" });
   }
 };
+
+exports.returnBook = async (req, res) => {
+  const { id, bookId } = req.params;
+  const { score } = req.body;
+
+  try {
+    const borrowRecord = await db("borrows")
+      .where({ user_id: id, book_id: bookId, return_date: null })
+      .first();
+
+    if (!borrowRecord) {
+      return res.status(400).json({
+        error: "No active borrow record found for this user and book",
+      });
+    }
+
+    await db("borrows")
+      .where({ id: borrowRecord.id })
+      .update({
+        return_date: new Date(),
+        rating: score || null,
+      });
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: "Failed to return book" });
+  }
+};
