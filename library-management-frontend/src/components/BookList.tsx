@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 interface Book {
   id: number;
@@ -23,18 +24,20 @@ const BookList: React.FC = () => {
       });
   }, []);
 
+  let navigate = useNavigate();
   return (
-    <div>
-      <h1>Book List</h1>
-      <ul>
-        {books.map((book) => (
-          <li key={book.id}>
-            <Link to={`/books/${book.id}`}>
-              {book.title} by {book.author}
-            </Link>
-          </li>
-        ))}
-      </ul>
+    <div className="card">
+      <h2>
+        <button className="button-back" onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </button>
+        Book List
+      </h2>
+      {books.map((book) => (
+        <Link className="button-list" to={`/books/${book.id}`}>
+          {book.title} by {book.author}
+        </Link>
+      ))}
     </div>
   );
 };

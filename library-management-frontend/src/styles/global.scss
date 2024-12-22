@@ -1,0 +1,116 @@
+$color-primary: #050c9c;
+$color-secondary: #3572ef;
+$color-list: #3abef9;
+$color-back: #a7e6ff;
+
+.card {
+  height: 100%;
+  border: 5px;
+  border-style: double;
+  text-align: center;
+  background-color: $color-back;
+  border-radius: 12px;
+  display: grid;
+  padding: 5rem;
+}
+
+.book-card {
+  border-color: $color-secondary;
+  border: 5px;
+  border-style: dotted;
+  margin-bottom: 1rem;
+  text-align: center;
+  background-color: $color-back;
+  border-radius: 24px;
+  display: grid;
+  padding: 2rem;
+}
+
+.card h1 {
+  font-size: 40px;
+  color: $color-primary;
+}
+
+.card h2 {
+  font-size: 32px;
+  color: $color-secondary;
+}
+
+.card p {
+  font-size: 15px;
+  color: $color-primary;
+}
+
+.card label {
+  font-size: 24px;
+  color: $color-primary;
+  margin-right: 0.5rem;
+}
+
+.button-primary {
+  border-radius: 8px;
+  font-size: 1rem;
+  margin: 1rem;
+  padding: 1rem 2rem;
+  background-color: $color-primary;
+  color: white;
+  text-decoration: none;
+  &:hover {
+    background-color: darken($color: $color-primary, $amount: 10);
+  }
+}
+
+.button-secondary {
+  border-radius: 8px;
+  font-size: 1rem;
+  margin: 1rem;
+  padding: 1rem 2rem;
+  background-color: $color-secondary;
+  color: white;
+  text-decoration: none;
+  &:hover {
+    background-color: darken($color: $color-secondary, $amount: 10);
+  }
+}
+
+.button-list {
+  display: table;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin: 1rem;
+  padding: 1rem 2rem;
+  background-color: $color-secondary;
+  color: white;
+  text-decoration: none;
+  &:hover {
+    background-color: darken($color: $color-secondary, $amount: 10);
+  }
+}
+
+.button-back {
+  border-radius: 8px;
+  font-size: 24px;
+  margin: 1rem;
+  padding: 1rem 2rem;
+  background-color: darken($color: $color-back, $amount: 5);
+  color: $color-primary;
+  border-color: lighten($color: $color-secondary, $amount: 10);
+  text-decoration: none;
+  &:hover {
+    background-color: darken($color: $color-back, $amount: 10);
+  }
+}
+
+.selection {
+  border-radius: 8px;
+  font-size: 24px;
+  margin: 1rem;
+  padding: 1rem 2rem;
+  background-color: darken($color: $color-back, $amount: 5);
+  color: $color-primary;
+  border-color: lighten($color: $color-secondary, $amount: 10);
+  text-decoration: none;
+  &:hover {
+    background-color: darken($color: $color-back, $amount: 10);
+  }
+}

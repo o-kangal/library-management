@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import BookIcon from "@mui/icons-material/Book";
+import ReturnIcon from "@mui/icons-material/SwapHoriz";
+import NotExist from "@mui/icons-material/DoNotDisturb";
 
 interface BorrowedBook {
   id: number;
@@ -41,6 +46,7 @@ const UserDetail: React.FC = () => {
       .post(`http://localhost:3000/users/${id}/return/${bookId}`)
       .then(() => {
         setMessage("Book returned successfully!");
+        alert("Book returned successfully!");
         setUser((prev) =>
           prev
             ? {
@@ -60,6 +66,7 @@ const UserDetail: React.FC = () => {
       });
   };
 
+  let navigate = useNavigate();
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -72,41 +79,61 @@ const UserDetail: React.FC = () => {
   );
 
   return (
-    <div>
-      <h1>User Details</h1>
+    <div className="card">
+      <h2>
+        <button className="button-back" onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </button>
+        User Details
+      </h2>
       <p>
         <strong>Name:</strong> {user.user.name}
       </p>
-
-      <h2>Borrowed Books</h2>
-
+      <h2>
+        <MenuBookIcon />
+        Currently Borrowed Books
+      </h2>
+      {notReturnedBooks.length === 0 ? (
+        <p>
+          <NotExist />
+        </p>
+      ) : (
+        ""
+      )}
       {notReturnedBooks.length > 0 && (
         <div>
-          <h3>Currently Borrowed Books</h3>
           <ul>
             {notReturnedBooks.map((book) => (
-              <li key={book.id}>
+              <li className="book-card" key={book.id}>
                 <p>
                   <strong>Title:</strong> {book.title}
                 </p>
                 <p>
                   <strong>Borrow Date:</strong> {book.borrow_date}
                 </p>
-                <button onClick={() => handleReturnBook(book.id)}>
-                  Return Book
-                </button>
+                <h2>
+                  <button
+                    className="button-back"
+                    onClick={() => handleReturnBook(book.id)}
+                  >
+                    <ReturnIcon />
+                    Return Book
+                  </button>
+                </h2>
               </li>
             ))}
           </ul>
         </div>
       )}
-
       {returnedBooks.length > 0 && (
         <div>
-          <h3>Returned Books</h3>
+          <h2>
+            <BookIcon />
+            Returned Books
+          </h2>
           <ul>
             {returnedBooks.map((book) => (
-              <li key={book.id}>
+              <li className="book-card" key={book.id}>
                 <p>
                   <strong>Title:</strong> {book.title}
                 </p>
@@ -125,8 +152,7 @@ const UserDetail: React.FC = () => {
           </ul>
         </div>
       )}
-
-      {message && <p>{message}</p>}
+      {/* {message && <p>{message}</p>} */}
     </div>
   );
 };

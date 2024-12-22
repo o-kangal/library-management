@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 interface User {
   id: number;
@@ -21,16 +22,20 @@ const UserList: React.FC = () => {
       });
   }, []);
 
+  let navigate = useNavigate();
   return (
-    <div>
-      <h1>User List</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            <Link to={`/users/${user.id}`}>{user.name}</Link>
-          </li>
-        ))}
-      </ul>
+    <div className="card">
+      <h2>
+        <button className="button-back" onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </button>
+        User List
+      </h2>
+      {users.map((user) => (
+        <Link className="button-list" to={`/users/${user.id}`}>
+          {user.name}
+        </Link>
+      ))}
     </div>
   );
 };

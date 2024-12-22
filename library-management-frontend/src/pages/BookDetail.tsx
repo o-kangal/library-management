@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import BorrowIcon from "@mui/icons-material/Bookmark";
+import ReturnIcon from "@mui/icons-material/SwapHoriz";
 
 interface Book {
   id: number;
@@ -90,13 +93,19 @@ const BookDetail: React.FC = () => {
       });
   };
 
+  let navigate = useNavigate();
   if (!book) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div>
-      <h1>Book Details</h1>
+    <div className="card">
+      <h2>
+        <button className="button-back" onClick={() => navigate(-1)}>
+          <ArrowBackIcon />
+        </button>
+        Book Details
+      </h2>
       <p>
         <strong>Title:</strong> {book.title}
       </p>
@@ -112,12 +121,18 @@ const BookDetail: React.FC = () => {
           <p>
             <strong>Borrowed By:</strong> {book.currentOwner.name}
           </p>
-          <button onClick={handleReturnBook}>Return Book</button>
+          <h2>
+            <button className="button-back" onClick={handleReturnBook}>
+              <ReturnIcon />
+              Return Book
+            </button>
+          </h2>
         </div>
       ) : (
         <div>
           <label htmlFor="user-select">Select User:</label>
           <select
+            className="selection"
             id="user-select"
             value={selectedUserId || ""}
             onChange={(e) => setSelectedUserId(Number(e.target.value))}
@@ -131,7 +146,12 @@ const BookDetail: React.FC = () => {
               </option>
             ))}
           </select>
-          <button onClick={handleBorrowBook}>Borrow Book</button>
+          <label>
+            <button className="button-back" onClick={handleBorrowBook}>
+              <BorrowIcon />
+              Borrow Book
+            </button>
+          </label>
         </div>
       )}
 
