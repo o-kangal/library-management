@@ -9,6 +9,11 @@ interface Book {
   year: number;
 }
 
+interface User {
+  id: number;
+  name: string;
+}
+
 interface BookDetailData extends Book {
   averageRating: string;
 }
@@ -16,7 +21,10 @@ interface BookDetailData extends Book {
 const BookDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [book, setBook] = useState<BookDetailData | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     axios
@@ -28,7 +36,33 @@ const BookDetail: React.FC = () => {
         console.error("Error fetching book details:", error);
         setError("Failed to fetch book details.");
       });
+
+    axios
+      .get<User[]>("http://localhost:3000/users")
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
   }, [id]);
+
+  const handleBorrowBook = () => {
+    if (!selectedUserId) {
+      setMessage("Please select a user.");
+      return;
+    }
+
+    axios
+      .post(`http://localhost:3000/users/${selectedUserId}/borrow/${id}`)
+      .then(() => {
+        setMessage("Book borrowed successfully!");
+      })
+      .catch((error) => {
+        console.error("Error borrowing book:", error);
+        setMessage("Failed to borrow the book.");
+      });
+  };
 
   if (error) {
     return <div>{error}</div>;
@@ -53,6 +87,28 @@ const BookDetail: React.FC = () => {
       <p>
         <strong>Average Rating:</strong> {book.averageRating}
       </p>
+
+      <div>
+        <label htmlFor="user-select">Select User:</label>
+        <select
+          id="user-select"
+          value={selectedUserId || ""}
+          onChange={(e) => setSelectedUserId(Number(e.target.value))}
+        >
+          <option value="" disabled>
+            Select a user
+          </option>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>
+              {user.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <button onClick={handleBorrowBook}>Borrow Book</button>
+
+      {message && <p>{message}</p>}
     </div>
   );
 };
