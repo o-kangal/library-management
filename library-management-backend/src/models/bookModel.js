@@ -1,4 +1,4 @@
-const db = require("../config/db"); // Veritabanı bağlantısını içe aktarın
+const db = require("../config/db");
 
 // Fetch book details along with the current owner (if borrowed)
 const getBookWithCurrentOwner = async (bookId) => {

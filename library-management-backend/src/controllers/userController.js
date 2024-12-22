@@ -21,6 +21,7 @@ exports.getUser = async (req, res) => {
       .where({ user_id: id })
       .join("books", "borrows.book_id", "=", "books.id")
       .select(
+        "books.id as id",
         "books.title",
         "borrows.borrow_date",
         "borrows.return_date",
