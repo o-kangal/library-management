@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { getBookWithCurrentOwner } = require("../models/bookModel");
 
 // Get all books
 exports.getBooks = async (req, res) => {
@@ -11,21 +12,20 @@ exports.getBooks = async (req, res) => {
 };
 
 // Get book details
+// Get book details with current owner
 exports.getBook = async (req, res) => {
   const { id } = req.params;
+
   try {
-    const book = await db("books").where({ id }).first();
-    if (!book) return res.status(404).json({ error: "Book not found" });
+    const book = await getBookWithCurrentOwner(id);
 
-    const avgRating = await db("borrows")
-      .where({ book_id: id })
-      .avg("rating as average")
-      .first();
+    if (!book) {
+      return res.status(404).json({ error: "Book not found" });
+    }
 
-    res
-      .status(200)
-      .json({ ...book, averageRating: avgRating.average || "No ratings yet" });
+    res.status(200).json(book);
   } catch (error) {
+    console.error("Error fetching book details:", error);
     res.status(500).json({ error: "Failed to fetch book details" });
   }
 };

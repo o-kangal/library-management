@@ -15,7 +15,7 @@ interface User {
 }
 
 interface BookDetailData extends Book {
-  averageRating: string;
+  currentOwner: User | null;
 }
 
 const BookDetail: React.FC = () => {
@@ -23,9 +23,9 @@ const BookDetail: React.FC = () => {
   const [book, setBook] = useState<BookDetailData | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
+  // Fetch book details and users
   useEffect(() => {
     axios
       .get<BookDetailData>(`http://localhost:3000/books/${id}`)
@@ -34,7 +34,6 @@ const BookDetail: React.FC = () => {
       })
       .catch((error) => {
         console.error("Error fetching book details:", error);
-        setError("Failed to fetch book details.");
       });
 
     axios
@@ -57,6 +56,15 @@ const BookDetail: React.FC = () => {
       .post(`http://localhost:3000/users/${selectedUserId}/borrow/${id}`)
       .then(() => {
         setMessage("Book borrowed successfully!");
+        setBook((prev) =>
+          prev
+            ? {
+                ...prev,
+                currentOwner:
+                  users.find((u) => u.id === selectedUserId) || null,
+              }
+            : prev
+        );
       })
       .catch((error) => {
         console.error("Error borrowing book:", error);
@@ -64,9 +72,23 @@ const BookDetail: React.FC = () => {
       });
   };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  const handleReturnBook = () => {
+    if (!book?.currentOwner) {
+      setMessage("This book is not borrowed.");
+      return;
+    }
+
+    axios
+      .post(`http://localhost:3000/users/${book.currentOwner.id}/return/${id}`)
+      .then(() => {
+        setMessage("Book returned successfully!");
+        setBook((prev) => (prev ? { ...prev, currentOwner: null } : prev));
+      })
+      .catch((error) => {
+        console.error("Error returning book:", error);
+        setMessage("Failed to return the book.");
+      });
+  };
 
   if (!book) {
     return <div>Loading...</div>;
@@ -84,29 +106,34 @@ const BookDetail: React.FC = () => {
       <p>
         <strong>Year:</strong> {book.year}
       </p>
-      <p>
-        <strong>Average Rating:</strong> {book.averageRating}
-      </p>
 
-      <div>
-        <label htmlFor="user-select">Select User:</label>
-        <select
-          id="user-select"
-          value={selectedUserId || ""}
-          onChange={(e) => setSelectedUserId(Number(e.target.value))}
-        >
-          <option value="" disabled>
-            Select a user
-          </option>
-          {users.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.name}
+      {book.currentOwner ? (
+        <div>
+          <p>
+            <strong>Borrowed By:</strong> {book.currentOwner.name}
+          </p>
+          <button onClick={handleReturnBook}>Return Book</button>
+        </div>
+      ) : (
+        <div>
+          <label htmlFor="user-select">Select User:</label>
+          <select
+            id="user-select"
+            value={selectedUserId || ""}
+            onChange={(e) => setSelectedUserId(Number(e.target.value))}
+          >
+            <option value="" disabled>
+              Select a user
             </option>
-          ))}
-        </select>
-      </div>
-
-      <button onClick={handleBorrowBook}>Borrow Book</button>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+          <button onClick={handleBorrowBook}>Borrow Book</button>
+        </div>
+      )}
 
       {message && <p>{message}</p>}
     </div>
